@@ -1,6 +1,6 @@
 // post.js
 
-const API_URL = 'posts.json';
+const API_URL = 'https://vitalsignal.github.io/posts.json';
 
 function getPostIdFromQuery() {
   const params = new URLSearchParams(window.location.search);

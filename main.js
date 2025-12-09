@@ -1,6 +1,6 @@
 // main.js
 
-const API_URL = 'posts.json';
+const API_URL = 'https://vitalsignal.github.io/posts.json';
 const POSTS_PER_PAGE = 12;
 
 function getCurrentPage() {
