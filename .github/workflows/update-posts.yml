@@ -1,0 +1,36 @@
+name: Update posts JSON
+
+on:
+  schedule:
+    # 매 시간 0분마다 실행 (cron 형식: 분 시 일 월 요일)
+    - cron: '0 * * * *'
+  workflow_dispatch: {}
+  # 원하면 수동으로도 실행 가능 (Actions 탭에서 Run workflow 버튼)
+
+permissions:
+  contents: write
+
+jobs:
+  update-posts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch latest posts JSON from Apps Script
+        run: |
+          curl -L "https://script.google.com/macros/s/AKfycbyqLmmZySB3D3F_6p25ywMg4QANet3A-Zo6mtLq0GQZOA_vdbNryaoTtixZ4UPPly_XKw/exec" -o posts.json
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ -n "$(git status --porcelain)" ]; then
+            git add posts.json
+            git commit -m "Update posts.json from Google Sheets"
+            git push
+          else
+            echo "No changes in posts.json"
+          fi
