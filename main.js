@@ -1,6 +1,5 @@
 // main.js
 
-// Apps Script Web App URL로 교체하세요
 const API_URL = 'posts.json';
 const POSTS_PER_PAGE = 10;
 
