@@ -20,7 +20,7 @@ jobs:
       - name: Fetch latest posts JSON from Apps Script
         run: |
           curl -L "https://script.google.com/macros/s/AKfycbyqLmmZySB3D3F_6p25ywMg4QANet3A-Zo6mtLq0GQZOA_vdbNryaoTtixZ4UPPly_XKw/exec" -o posts.json
-
+          # https://docs.google.com/spreadsheets/d/1nZeUBGnm9yj3Wfna1VQmmhlNNMsblhSkptcdorRgyGo/edit?usp=sharing
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
