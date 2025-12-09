@@ -1,7 +1,7 @@
 // main.js
 
 // Apps Script Web App URL로 교체하세요
-const API_URL = 'https://script.google.com/macros/s/AKfycbyqLmmZySB3D3F_6p25ywMg4QANet3A-Zo6mtLq0GQZOA_vdbNryaoTtixZ4UPPly_XKw/exec';
+const API_URL = 'posts.json';
 const POSTS_PER_PAGE = 10;
 
 function getCurrentPage() {
