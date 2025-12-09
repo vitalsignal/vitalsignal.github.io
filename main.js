@@ -1,7 +1,7 @@
 // main.js
 
 const API_URL = 'posts.json';
-const POSTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 12;
 
 function getCurrentPage() {
   const params = new URLSearchParams(window.location.search);
@@ -9,7 +9,7 @@ function getCurrentPage() {
   return page > 0 ? page : 1;
 }
 
-function getTextSnippet(html, length = 100) {
+function getTextSnippet(html, length = 80) {
   const temp = document.createElement('div');
   temp.innerHTML = html;
   const text = temp.textContent || temp.innerText || '';
@@ -46,7 +46,7 @@ function renderPosts(posts) {
         <div class="post-content">
           <div class="post-date">${formatDate(post.date)}</div>
           <h2>${post.title}</h2>
-          <p class="post-snippet">${getTextSnippet(post.bodyHtml, 100)}</p>
+          <p class="post-snippet">${getTextSnippet(post.bodyHtml, 80)}</p>
         </div>
       </a>
     `;
