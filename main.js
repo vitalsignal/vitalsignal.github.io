@@ -78,8 +78,8 @@ async function loadPosts() {
     const res = await fetch(API_URL);
     const posts = await res.json();
 
-    // D열 날짜를 기준으로 최신순 정렬 (내림차순)
-    posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // D열 날짜를 기준으로 오래된 순 정렬 (오름차순)
+    posts.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     renderPosts(posts);
   } catch (err) {
