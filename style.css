@@ -20,6 +20,7 @@ body {
 }
 
 header {
+  z-index: 1;
   background: rgba(7,17,157,0.6);
   backdrop-filter:blur(10px);
   position:fixed;
