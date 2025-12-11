@@ -3,7 +3,25 @@
 const API_URL = 'https://vitalsignal.github.io/posts.json';
 const POSTS_PER_PAGE = 12;
 
-// "December 09, 2025 at 12:21AM" → Date 객체로 변환
+// placeholder image for missing or invalid thumbnails
+const PLACEHOLDER_IMG = "asset/img/placeholder.png";
+
+// Detect invalid image URLs such as play.svg or empty values
+function isInvalidImage(url) {
+  if (!url || url.trim() === "") return true;
+
+  // Add more patterns as needed
+  const blockedPatterns = [
+    "play.svg",
+    "static/img/play.svg",
+    "placeholder",
+    "default-thumbnail"
+  ];
+
+  return blockedPatterns.some(pattern => url.includes(pattern));
+}
+
+// Convert RSS-style date like: "December 09, 2025 at 12:21AM"
 function parsePostDate(value) {
   if (!value || typeof value !== 'string') return null;
 
@@ -28,11 +46,11 @@ function parsePostDate(value) {
   let hour = parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);
 
-  // 12시간제 → 24시간제 변환
+  // 12시간제 변환
   if (ampm === 'AM') {
-    if (hour === 12) hour = 0;       // 12:xx AM → 0시
-  } else { // PM
-    if (hour !== 12) hour += 12;     // 1~11 PM → +12
+    if (hour === 12) hour = 0;
+  } else {
+    if (hour !== 12) hour += 12;
   }
 
   return new Date(year, month, day, hour, minute, 0, 0);
@@ -51,12 +69,11 @@ function getTextSnippet(html, length = 80) {
   return text.length > length ? text.slice(0, length) + '…' : text;
 }
 
-// 화면에 보여줄 날짜 포맷 (지금처럼 YYYY-MM-DD 유지하고 싶으면 그대로 사용)
 function formatDate(value) {
   if (!value) return '';
   const d = parsePostDate(value);
-  if (!d) return String(value);        // 파싱 실패 시 원문 그대로
-  return d.toISOString().substring(0, 10); // YYYY-MM-DD
+  if (!d) return String(value);
+  return d.toISOString().substring(0, 10);
 }
 
 function renderPosts(posts) {
@@ -72,13 +89,19 @@ function renderPosts(posts) {
     const article = document.createElement('article');
     article.className = 'post-item';
 
-    const imgHtml = post.imageUrl
-      ? `<img class="post-thumb" src="${post.imageUrl}" alt="${post.title}">`
-      : `<div class="post-thumb"></div>`;
+    // 이미지 선택 로직
+    let imgSrc = post.imageUrl;
+    if (isInvalidImage(imgSrc)) imgSrc = PLACEHOLDER_IMG;
 
+    // HTML 생성
     article.innerHTML = `
       <a href="post.html?id=${encodeURIComponent(post.id)}">
-        ${imgHtml}
+        <img 
+          class="post-thumb" 
+          src="${imgSrc}" 
+          alt="${post.title}"
+          onerror="this.onerror=null; this.src='${PLACEHOLDER_IMG}'"
+        >
         <div class="post-content">
           <div class="post-date">${formatDate(post.date)}</div>
           <h2>${post.title}</h2>
@@ -102,9 +125,7 @@ function renderPagination(totalCount, currentPage) {
     const a = document.createElement('a');
     a.href = `?page=${p}`;
     a.textContent = p;
-    if (p === currentPage) {
-      a.classList.add('active');
-    }
+    if (p === currentPage) a.classList.add('active');
     pagEl.appendChild(a);
   }
 }
@@ -114,15 +135,10 @@ async function loadPosts() {
     const res = await fetch(API_URL);
     const posts = await res.json();
 
-    // date 최신순 (내림차순) 정렬
     posts.sort((a, b) => {
       const da = parsePostDate(a.date);
       const db = parsePostDate(b.date);
-
-      const ta = da ? da.getTime() : 0;
-      const tb = db ? db.getTime() : 0;
-
-      return tb - ta; // 최신이 먼저
+      return (db ? db.getTime() : 0) - (da ? da.getTime() : 0);
     });
 
     renderPosts(posts);
